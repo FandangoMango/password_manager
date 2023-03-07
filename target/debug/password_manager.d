@@ -1,0 +1,1 @@
+C:\Users\mathi\rust_projects\password_manager\target\debug\password_manager.exe: C:\Users\mathi\rust_projects\password_manager\src\main.rs C:\Users\mathi\rust_projects\password_manager\src\vault\components.rs
