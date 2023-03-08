@@ -1,32 +1,44 @@
-mod vault {
-    pub mod components;
-}
+#![allow(warnings)]
+mod vault;
+mod parsing;
 
-use crate::vault::components::*;
 use std::io;
-fn main() -> Result<(), String> {
+use std::process::exit;
+use crate::vault::keyvault::*;
+use crate::vault::keybox::*;
+use crate::parsing::args::*;
+use clap::Parser;
+fn main() {
     let mut vault = KeyVault::new("Main");
-    'start: loop {
-        let args = get_args();
-        if args.len() == 0 {
-            println!("No arguments provided.");
-        }
-        if let Some(arg1) = args.get(0) {
-            match arg1.as_str() {
-                "add" => vault.add_key(&args[1]).unwrap(),
-                _ => continue,
-            }
-        }
-        println!("{}", vault);
+    let args = AppArgs::parse();
+    match args.command {
+        Command::Add(add_arguments) => vault.add_key(&add_arguments).unwrap_or_else(quit)
     }
-    Ok(())
 }
 
-fn get_args() -> Vec<String> {
-    let mut input = String::new();
-    io::stdin().read_line(&mut input);
-    input
-        .split_ascii_whitespace()
-        .map(|x| x.to_string())
-        .collect()
+fn quit(reason: String) {
+    println!("{}", reason);
+}
+
+mod tests {
+    use crate::parsing::args::*;
+    use crate::vault::keyvault::*;
+    use crate::vault::keybox::*;
+    use crate::Command::Add;
+
+    #[test]
+    fn adding_key_with_duplicate_name_fails() {
+        let mut vault = KeyVault::new("Main");
+        let add_arguments = AddKeyArgs {
+            name: "netflix".into(),
+            username: None,
+            url: Some("netflix.com".into()),
+            email: None,
+            password: Some("password".into()),
+        };
+        let result = vault.add_key(&add_arguments);
+        assert!(result.is_ok());
+        let result = vault.add_key(&add_arguments);
+        assert!(result.is_err());
+    }
 }
