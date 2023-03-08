@@ -1,5 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
+use crate::vault::KeyBox;
+
 #[derive(Debug, Parser)]
 #[clap(author, version, about = "A CLI for safely(-ish) storing passwords")]
 pub struct AppArgs {
@@ -10,17 +12,19 @@ pub struct AppArgs {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// Add a new keybox to the vault
-    #[command(arg_required_else_help = false)]
-    Add(AddKeyArgs),
+    #[command(arg_required_else_help = true)]
+    Add(KeyArgs),
+    /// Update an existing keybox
+    
+    Update(KeyArgs),
     /*/// Display contents in a keybox
     Show(ShowKey),
-    /// Update an existing keybox
-    Update(UpdateKey),
+
     /// Delete a keybox
     Delete(DeleteKey), */
 }
-#[derive(Debug, Args)]
-pub struct AddKeyArgs {
+#[derive(Debug, Args, Clone)]
+pub struct KeyArgs {
     /// Key name
     pub name: String,
     

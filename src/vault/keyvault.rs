@@ -1,5 +1,5 @@
 use crate::vault::*;
-use crate::AddKeyArgs;
+use crate::KeyArgs;
 
 use std::collections::HashMap;
 use std::fmt;
@@ -16,14 +16,21 @@ impl KeyVault {
         }
     }
 
-    pub fn add_key(&mut self, args: &AddKeyArgs) -> Result<(), String> {
-        let name = &args.name;
+    pub fn add_key(&mut self, args: KeyArgs) -> Result<(), String> {
+        {let name = &args.name;
         if self.keys.contains_key(name) {
             return Err(format!("Fatal: Key with name '{}' already exists.\n\n\
-            Tip: Use another name for the key or delete the existing one", name));
+            Tip: Use another name for the key or delete the existing one.", name));
         }
-        let key_box = KeyBox::new(name);
-        self.keys.insert(name.to_string(), key_box);
+        }
+        let key_box = KeyBox::from(args);
+        self.keys.insert(key_box.name.to_string(), key_box);
+        Ok(())
+    }
+    
+    pub fn update_key(&mut self, args: KeyArgs) -> Result<(), String> {
+        //if !self.keys.contains_key(k)
+
         Ok(())
     }
 }

@@ -12,7 +12,8 @@ fn main() {
     let mut vault = KeyVault::new("Main");
     let args = AppArgs::parse();
     match args.command {
-        Command::Add(add_arguments) => vault.add_key(&add_arguments).unwrap_or_else(quit)
+        Command::Add(key_args) => vault.add_key(key_args).unwrap_or_else(quit),
+        Command::Update(key_args) => vault.update_key(key_args).unwrap_or_else(quit)
     }
 }
 
@@ -29,16 +30,16 @@ mod tests {
     #[test]
     fn adding_key_with_duplicate_name_fails() {
         let mut vault = KeyVault::new("Main");
-        let add_arguments = AddKeyArgs {
+        let add_arguments = KeyArgs {
             name: "netflix".into(),
-            username: None,
+            username: Some("Sneaky_peedo".into()),
             url: Some("netflix.com".into()),
-            email: None,
+            email: Some("Speedos@gmail.com".into()),
             password: Some("password".into()),
         };
-        let result = vault.add_key(&add_arguments);
+        let result = vault.add_key(add_arguments.clone());
         assert!(result.is_ok());
-        let result = vault.add_key(&add_arguments);
+        let result = vault.add_key(add_arguments);
         assert!(result.is_err());
     }
 }

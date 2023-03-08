@@ -1,26 +1,24 @@
 use std::fmt;
+use crate::parsing::KeyArgs;
 #[macro_use]
 use crate::vault::keyvault::*;
 #[derive(Debug)]
 pub struct KeyBox {
-    name: String,
+    pub name: String,
     url: Option<String>,
     username: Option<String>,
     email: Option<String>,
     password: Option<String>,
 }
-impl KeyBox {
-    pub fn new(name: &str) -> KeyBox {
+
+impl From<KeyArgs> for KeyBox {
+    fn from(args: KeyArgs) -> Self {
+        let (name, username, url, email, password) = (args.name, args.username, args.url, args.email, args.password);
         KeyBox {
-            name: name.into(),
-            url: None,
-            username: None,
-            email: None,
-            password: None,
+            name, username, url, email, password
         }
     }
 }
-
 #[macro_export]
 macro_rules! display_option {
     ($name:expr, $value:expr, $f:expr) => {
